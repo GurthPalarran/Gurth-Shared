@@ -24,6 +24,16 @@ BOOL Formula_Calculator(
 * <i> Cal_Err</i>: 发生错误时弹窗选择值的指针。
 
 <pre>
+BOOL Ansi_Call(
+	char Buffer[],
+	double _M,
+	double _P,
+	double *Result,
+	UINT *Cal_Err);
+</pre>
+该函数各形参用法与<i>Formula_Calculator()</i>函数类似，不过由于该项目基于UNICODE字符集，使用该函数可直接传入基于ANSI字符集的表达式；
+
+<pre>
 BOOL Advance_Formula_Compare(
 	CString Buffer_formula_compare,
 	double A,

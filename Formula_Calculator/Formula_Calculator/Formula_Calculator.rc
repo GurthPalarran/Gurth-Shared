@@ -47,10 +47,10 @@ BEGIN
         BLOCK "080404b0"
         BEGIN
             VALUE "CompanyName", "Gurth Inc"
-            VALUE "FileDescription", "Gurth Inc"
+            VALUE "FileDescription", "Gurth Formula Calculator"
             VALUE "FileVersion", "1.0.0.1"
             VALUE "InternalName", "Formula_Calculator.dll"
-            VALUE "LegalCopyright", "TODO:  (C) <公司名>。  保留所有权利。"
+            VALUE "LegalCopyright", "Gurth Inc  <C>  保留所有权利。"
             VALUE "OriginalFilename", "Formula_Calculator.dll"
             VALUE "ProductName", "Formula Calculator"
             VALUE "ProductVersion", "1.0.0.1"
