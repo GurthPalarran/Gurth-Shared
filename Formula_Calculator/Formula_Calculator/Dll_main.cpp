@@ -434,10 +434,7 @@ BOOL Formula_Compare(
 	}
 }
 
-// The is an function that can doing comparation
-// It is a part of other project. 
-// Let's forget it !!!!
-BOOL Selection_Formula_Calculator(
+BOOL Advance_Formula_Compare(
 	CString Buffer_formula_compare,
 	double A,
 	double B,
@@ -558,7 +555,7 @@ BOOL Selection_Formula_Calculator(
 			}
 		}
 	}
-	BOOL Boo1, Boo2;
+	BOOL Boo1=TRUE, Boo2=TRUE;
 	while (1)
 	{
 		if (!CS_2.IsEmpty() && !CS_1.IsEmpty())
@@ -603,7 +600,7 @@ BOOL Selection_Formula_Calculator(
 	}
 	if (!CS_2.IsEmpty() && !CS_3.IsEmpty())
 	{
-		if (Boo1&&Boo2)
+		if (Boo1 && Boo2)
 		{
 			MessageBox(NULL, L"Success", L"Tips", MB_OK);
 			*UPPER = TRUE;
