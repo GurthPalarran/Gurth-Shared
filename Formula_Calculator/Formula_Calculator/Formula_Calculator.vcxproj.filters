@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Formula_Calculator.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -43,9 +40,6 @@
     <ClInclude Include="Resource.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Formula_Calculator.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="hetc.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -53,6 +47,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="TestClass.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Dll_main.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

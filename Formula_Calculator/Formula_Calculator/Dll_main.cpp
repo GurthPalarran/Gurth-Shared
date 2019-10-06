@@ -1,10 +1,29 @@
 #include "stdafx.h"
 #include "hmain.h"
 #include "TestClass.h"
+#include "Dll_main.h"
 
 BOOL Test(TestClass *p)
 {
 	return TRUE;
+}
+
+BOOL Ansi_Call(
+	char Buffer[],
+	double _M,
+	double _P,
+	double *Result,
+	UINT *Cal_Err)
+{
+	CString BufferTmp;
+	USES_CONVERSION;
+	BufferTmp = A2T(Buffer);
+	BufferTmp.Replace(L'x', L'M');
+	if (Formula_Calculator(BufferTmp, _M, _P, Result, Cal_Err))
+	{
+		return TRUE;
+	}
+	else return TRUE;
 }
 
 BOOL Formula_Calculator(
@@ -15,10 +34,14 @@ BOOL Formula_Calculator(
 	UINT *Cal_Err)
 {
 	stack stack;
+	if (Buffer_trans_formula.Mid(0, 1) == L"-")
+	{
+		Buffer_trans_formula.Insert(0, L"0");
+	}
 	int Buffer_Len = Buffer_trans_formula.GetLength();
 	CString _M, _P;
 	CString Formula_Right[STACK_MAX];
-	BOOL Neg = FALSE;
+	BOOL Neg_First = FALSE;
 	int Items = 0;
 	_M.Format(L"%f", _Materrnal);
 	_P.Format(L"%f", _Paternal);
@@ -27,11 +50,13 @@ BOOL Formula_Calculator(
 		CString CStmp;
 		CStmp.Empty();
 		CStmp = Buffer_trans_formula.Mid(i, 1);
+		/*
 		if (CStmp == L"-" && i == 0)
 		{
-			Neg = TRUE;
+			Neg_First = TRUE;
 			CStmp = Buffer_trans_formula.Mid(++i, 1);
 		}
+		*/
 		if (CStmp.SpanIncluding(L"0123456789") == CStmp)
 		{
 			CString tmp2 = Buffer_trans_formula.Mid(i + 1, 1);
@@ -42,12 +67,12 @@ BOOL Formula_Calculator(
 				tmp2.Empty();
 				tmp2 = Buffer_trans_formula.Mid(i + 1, 1);
 			}
-			Formula_Right[Items].Empty();
-			if (Neg)
+			if (tmp2 == L"M" || tmp2 == L"P")
 			{
-				Formula_Right[0] += L"-";
-				Neg = FALSE;
+				Buffer_trans_formula.Insert(i+1, L"*");
+				Buffer_Len += 1;
 			}
+			Formula_Right[Items].Empty();
 			Formula_Right[Items] += CStmp;
 			Items++;
 			continue;
@@ -55,11 +80,6 @@ BOOL Formula_Calculator(
 		else if (CStmp == L"M")
 		{
 			Formula_Right[Items].Empty();
-			if (Neg)
-			{
-				Formula_Right[0] += L"-";
-				Neg = FALSE;
-			}
 			Formula_Right[Items] += _M;
 			Items++;
 			continue;
@@ -67,11 +87,6 @@ BOOL Formula_Calculator(
 		else if (CStmp == L"P")
 		{
 			Formula_Right[Items].Empty();
-			if (Neg)
-			{
-				Formula_Right[0] += L"-";
-				Neg = FALSE;
-			}
 			Formula_Right[Items] += _P;
 			Items++;
 			continue;
@@ -170,10 +185,19 @@ BOOL Formula_Calculator(
 						}
 						else
 						{
-							Formula_Right[Items].Empty();
-							Formula_Right[Items] += stack.pop();
-							Items++;
-							stack.push(CStmp);
+							do
+							{
+								Formula_Right[Items].Empty();
+								Formula_Right[Items] += stack.pop();
+								Items++;
+								if (stack.TOP >= 0 && !stack.Height_Priority(CStmp, stack.GetTop()))
+									continue;
+								else
+								{
+									stack.push(CStmp);
+									break;
+								}
+							} while (1);
 						}
 					}
 				}
@@ -187,6 +211,17 @@ BOOL Formula_Calculator(
 		Formula_Right[Items] += stack.pop();
 		Items++;
 	}
+	/*
+	if (Neg_First)
+	{
+		CString Negtmp;
+		double doutmp;
+		Negtmp = Formula_Right[0];
+		doutmp = _ttof(Negtmp);
+		doutmp = -doutmp;
+		Formula_Right[0].Format(L"%f", doutmp);
+	}
+	*/
 	if (stack.TOP == -1)
 	{
 		stack.push(Formula_Right[0]);
@@ -199,6 +234,12 @@ BOOL Formula_Calculator(
 	for (int i = 1; i < Items; i++)
 	{
 		if (Formula_Right[i].SpanIncluding(L"0123456789.") == Formula_Right[i])
+		{
+			stack.push(Formula_Right[i]);
+		}
+		else if (Formula_Right[i].Mid(0, 1) == L"-"
+			&& !Formula_Right[i].Mid(1).IsEmpty()
+			&& Formula_Right[i].Mid(1).SpanIncluding(L"0123456789.") == Formula_Right[i].Mid(1))
 		{
 			stack.push(Formula_Right[i]);
 		}
